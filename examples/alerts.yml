@@ -1,0 +1,67 @@
+# Example Prometheus alerting rules for mdatp_exporter.
+# Load with: rule_files: ["alerts.yml"]
+groups:
+  - name: mdatp
+    rules:
+      - alert: MdatpNotResponding
+        expr: mdatp_up == 0
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Defender for Endpoint is not answering on {{ $labels.instance }}"
+          description: "`mdatp health` failed or timed out for 15 minutes. The daemon may be stopped, hung, or its files may be missing."
+
+      - alert: MdatpHung
+        expr: increase(mdatp_health_timeouts_total[1h]) > 0
+        labels:
+          severity: critical
+        annotations:
+          summary: "Defender for Endpoint daemon is hung on {{ $labels.instance }}"
+          description: "`mdatp health` timed out. The service can look 'active (running)' while doing nothing; restart mdatp."
+
+      - alert: MdatpUnhealthy
+        # Network Protection on an unsupported release ring is a policy warning,
+        # not a broken agent, so it is excluded here.
+        expr: |
+          mdatp_healthy == 0
+          unless on (instance)
+          (count by (instance) (mdatp_health_issue) == count by (instance) (mdatp_health_issue{issue=~"Network Protection cannot start.*"}))
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Defender for Endpoint reports unhealthy on {{ $labels.instance }}"
+          description: "Check `mdatp health --field health_issues` on the host."
+
+      - alert: MdatpNotLicensed
+        expr: mdatp_licensed == 0
+        for: 30m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Defender for Endpoint is not onboarded on {{ $labels.instance }}"
+
+      - alert: MdatpRealTimeProtectionOff
+        expr: mdatp_real_time_protection_enabled == 0
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Real-time protection is off on {{ $labels.instance }}"
+
+      - alert: MdatpDefinitionsStale
+        expr: mdatp_definitions_age_seconds > 3 * 86400
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Defender definitions are {{ $value | humanizeDuration }} old on {{ $labels.instance }}"
+
+      - alert: MdatpExpiringSoon
+        expr: (mdatp_product_expiration_timestamp_seconds - time()) < 30 * 86400
+        labels:
+          severity: warning
+        annotations:
+          summary: "This mdatp build expires in less than 30 days on {{ $labels.instance }}"
+          description: "Upgrade the mdatp package before it stops protecting the host."

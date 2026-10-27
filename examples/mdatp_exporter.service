@@ -1,0 +1,17 @@
+[Unit]
+Description=Prometheus exporter for Microsoft Defender for Endpoint (mdatp)
+After=network-online.target mdatp.service
+Wants=network-online.target
+
+[Service]
+# `mdatp health` needs root to talk to the Defender daemon.
+User=root
+ExecStart=/usr/local/bin/mdatp_exporter --web.listen-address=:10060
+Restart=on-failure
+RestartSec=10s
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

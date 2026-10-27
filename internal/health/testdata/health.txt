@@ -1,0 +1,27 @@
+healthy                                     : false
+health_issues                               : ["Network Protection cannot start due to unsupported release ring"]
+licensed                                    : true
+engine_version                              : "1.1.25080.4000"
+app_version                                 : "101.26091.0004"
+org_id                                      : "00000000-0000-0000-0000-000000000000"
+log_level                                   : "info"
+release_ring                                : "Production"
+product_expiration                          : Jul 18, 2027 at 04:31:04 PM
+cloud_enabled                               : true [managed]
+passive_mode_enabled                        : false [managed]
+real_time_protection_enabled                : true [managed]
+real_time_protection_available              : true
+real_time_protection_subsystem              : "fanotify"
+supplementary_events_subsystem              : "ebpf"
+automatic_definition_update_enabled         : true
+definitions_updated                         : Oct 26, 2026 at 08:45:08 PM
+definitions_updated_minutes_ago             : 1
+definitions_version                         : "1.439.90.0"
+definitions_status                          : "up_to_date"
+edr_early_preview_enabled                   : "disabled"
+edr_device_tags                             : [{"key":"GROUP","value":""}] [managed]
+edr_group_ids                               : ""
+edr_machine_id                              : "0000000000000000000000000000000000000000"
+conflicting_applications                    : []
+network_protection_status                   : "enablement_failed_due_to_edr_capabilities"
+network_protection_enforcement_level        : "block" [managed]

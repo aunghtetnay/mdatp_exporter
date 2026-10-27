@@ -1,0 +1,4 @@
+/mdatp_exporter
+/dist/
+*.test
+*.out
